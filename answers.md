@@ -32,7 +32,9 @@ Pour l'action, l'espace brut du simulateur commande directement les 7 moteurs ar
 
 **Q1.2** Au lieux d'avoir 7 dimensions pour les articulations, l'espace de l'effecteur est réduit à 3 dimensions $\Delta x, \Delta y, \Delta z$. L'apprentissage est plus rapide car les actions sont moins complexes : si on veut faire un mouvement, on avance selon les 3 axes au lieu de calculer la rotation pour chaque articulation.
 
-**Q1.3** ...
+**Q1.3** La récompense n'est donnée que si le cube est attrapé puis soulevé. Elle est binaire : le robot a soulevé le cube ou non (1.0 ou 0.0).  
+La récompense est sparse : le robot ne reçoit rien tant que la tâche n'est pas accomplie.  
+Le problème en exploration aléatoire est que le robot n'apprend rien. Comme il n'est récompensé que si il a soulevé le cube, il faut qu'il y ait un enchaînement de mouvements qui lui permette d'effectuer cette tâche. Or en ne récoltant que des 0.0, la probabilité pour que ça arrive par hasard est faible.
 
 **Q1.4** Success rate: ... · Mean time to success: ... s · Hardest phase: ...
 
