@@ -15,8 +15,9 @@ controller and LeRobot's messages:
   Ctrl instead; its Ctrl keys must be held across a control step, are swapped (its "open" closes
   the gripper), and MacBooks have no Right Ctrl. Its own re-record key does not exist, and LeRobot
   never passes gym_hil's re-record flag on to the recording loop.
-- When you drive without a policy (teleoperation, recording), lifting the cube no longer ends the
-  episode: you end it with Enter when you are done, and the reward (1) comes with that key press,
+- When you drive without a policy (teleoperation, recording), episodes last TELEOP_EPISODE_S
+  seconds instead of 10, you keep control across episodes (Space only once), and lifting the cube
+  no longer ends the episode: you end it with Enter when you are done, and the reward (1) comes with that key press,
   so a recorded demo still has a single reward on its last frame. Pressing Enter before the cube
   is lifted prints a warning. During training, a lift still ends the episode by itself.
 - A SUCCESS/FAILURE key pressed during the reset pause no longer ends the next episode on its
@@ -43,7 +44,7 @@ import numpy as np
 from common import add_common_args, check_display, detect_device, load_reference, make_config, run_module
 
 KEY_HELP = """Keyboard controls:
-  Space              take control / hand it back (press it at the start of each episode to drive)
+  Space              take control / hand it back{space_note}
   Arrow keys         move in the x-y plane
   U / D              move up / down (one tap = one step of about 2.5 cm; hold to keep moving)
   C (hold)           grasp: the gripper stays closed while C is held and opens when you release it
@@ -55,6 +56,9 @@ KEY_HELP = """Keyboard controls:
 # gym_hil's gripper commands are named the wrong way round: its "open" command (action 2) closes
 # the fingers and its "close" command (action 0) opens them. These are the commands to send.
 GRASP, RELEASE = "open", "close"
+
+# Episode length when you drive without a policy (teleop.py, record.py). Training keeps 10 s.
+TELEOP_EPISODE_S = 30
 Z_KEYS = {"u": "forward_z", "d": "backward_z"}
 
 rerecord_pressed = False  # set by the X key, read by EpisodeLogFilter
@@ -103,8 +107,11 @@ def patch_input_controllers():
     for cls in (iu.KeyboardController, iu.GamepadController, iu.GamepadControllerHID):
         def reset(self, _orig=cls.reset):
             global rerecord_pressed
+            intervention = self.key_states.get("intervention", False) if hasattr(self, "key_states") else False
             _orig(self)
             self.episode_end_status = None
+            if manual_success and hasattr(self, "key_states"):  # no policy: keep control across episodes
+                self.key_states["intervention"] = intervention
             # The gripper opens on reset; close it again if C is still held.
             self.pending_gripper_commands = [GRASP] if getattr(self, "grasp_held", False) else []
             self.pending_z_key = None
@@ -119,7 +126,10 @@ def patch_input_controllers():
         self.pending_gripper_commands, self.grasp_held = [], False
         with contextlib.redirect_stdout(io.StringIO()):  # gym_hil's key help is wrong
             start(self)
-        print(KEY_HELP.format(enter_note=" (once the cube is lifted: V sits next to C, so you can "
+        print(KEY_HELP.format(
+            space_note=" (once: you keep control across episodes)" if manual_success else
+            " (press it at the start of each episode to drive)",
+            enter_note=" (once the cube is lifted: V sits next to C, so you can "
                                           "keep holding C)" if manual_success else ""))
 
         # Start listeners one at a time: pynput's macOS set-up is not safe to run concurrently.
@@ -262,16 +272,24 @@ class EpisodeLogFilter(logging.Filter):
         return True
 
 
-def install(fps=None, success_by_key=False):
+def install(fps=None, success_by_key=False, episode_steps=None):
     """Set up the TP's keyboard controls, simulator window and messages in this process.
 
     Call it before LeRobot creates the environment (`lerobot_rl.py` does this). With
-    `success_by_key`, episodes end on Enter instead of when the cube is lifted.
+    `success_by_key` (no policy), episodes end on V/Enter instead of when the cube is lifted, the
+    operator keeps control across episodes, and episodes last `episode_steps` steps.
     """
     global manual_success
     manual_success = success_by_key
     if success_by_key:
         patch_success_by_key()
+    if episode_steps:
+        import gym_hil  # noqa: F401  (registers the environments)
+        from gymnasium.envs.registration import registry
+
+        for env_id, spec in registry.items():
+            if env_id.startswith("gym_hil/PandaPickCube"):
+                spec.max_episode_steps = episode_steps
     patch_input_controllers()
     patch_rerecord_flag()
     patch_viewer()
@@ -287,7 +305,8 @@ def main():
     cfg = make_config(load_reference("env_config.json"),
                        {"mode": None, "device": detect_device(),
                         # LeRobot stops after this many episodes: make it unlimited in practice.
-                        "dataset.num_episodes_to_record": 1_000_000}, name)
+                        "dataset.num_episodes_to_record": 1_000_000,
+                        "env.processor.reset.control_time_s": TELEOP_EPISODE_S}, name)
     print("\nTeleoperation runs until you stop it: press Ctrl+C in this terminal.")
     run_module("gym_manipulator", cfg)
 

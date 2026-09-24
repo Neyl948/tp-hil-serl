@@ -60,8 +60,11 @@ def main():
     cfg = load_config(sys.argv[2:])
     if sys.argv[1] in ("actor", "gym_manipulator"):
         import teleop
-        # Without a policy (teleop, record) the operator ends each episode with Enter.
-        teleop.install(cfg.get("env", {}).get("fps"), success_by_key=sys.argv[1] == "gym_manipulator")
+        env = cfg.get("env", {})
+        no_policy = sys.argv[1] == "gym_manipulator"  # teleop, record: the operator drives
+        control_time_s = (env.get("processor", {}).get("reset") or {}).get("control_time_s")
+        teleop.install(env.get("fps"), success_by_key=no_policy,
+                       episode_steps=int(control_time_s * env["fps"]) if no_policy and control_time_s else None)
     extra = actor_output_args(sys.argv[2:], cfg) if sys.argv[1] == "actor" else []
     sys.argv = [module] + sys.argv[2:] + extra
     runpy.run_module(module, run_name="__main__", alter_sys=True)

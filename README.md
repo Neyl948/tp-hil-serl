@@ -6,6 +6,8 @@ Built on [LeRobot](https://github.com/huggingface/lerobot)'s HIL-SERL implementa
 
 **Students: the lab handout with all the exercises is [`TP.md`](TP.md). Write your report in [`answers.md`](answers.md).**
 
+> **Submission deadline: Thursday 1 October 2026, before midnight** (one week after the TP). One report per group: list **all group members** (full name and GitHub username of each) at the top of `answers.md`, and each member registers in the class spreadsheet. How to hand in: [Hand-in on GitHub](TP.md#hand-in-on-github).
+
 | Part | Duration | Content | Script |
 | --- | --- | --- | --- |
 | Setup | 15 min | Check the machine, controls, W&B | `check_setup.py` |
@@ -74,7 +76,7 @@ python scripts/train.py --run noHIL # Part 3: prints the learner/actor commands 
 
 Then follow [`TP.md`](TP.md). Everything you produce goes to `runs/` (ignored by git).
 
-**Hand-in:** students push their report to their own private GitHub repository, add the instructor (`Silviatulli`) as a collaborator, and register their name, GitHub username and repository link in the [class spreadsheet](https://docs.google.com/spreadsheets/d/1z7GuBLEifa7PDZplGhnKOQXfGCPMJKUpL1sx0CHchBA/edit?usp=sharing). Details in [`TP.md`](TP.md#hand-in-on-github).
+**Hand-in (deadline Thursday 1 October 2026, before midnight):** students push their report to their own private GitHub repository, add the instructor (`Silviatulli`) as a collaborator, and register their name, GitHub username and repository link in the [class spreadsheet](https://docs.google.com/spreadsheets/d/1z7GuBLEifa7PDZplGhnKOQXfGCPMJKUpL1sx0CHchBA/edit?usp=sharing). Details in [`TP.md`](TP.md#hand-in-on-github).
 
 ## Repository layout
 

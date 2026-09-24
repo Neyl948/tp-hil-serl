@@ -1,6 +1,6 @@
 # TP: Interactive Robot Learning with HIL-SERL
 
-**Duration:** 4 hours · **Groups of 2:** one *operator* at the controls, one *observer* who times, counts and takes notes. Swap roles between parts.
+**Duration:** 4 hours · **Groups of 2 or 3:** one *operator* at the controls, one *observer* who times, counts and takes notes (in a group of 3, the third member follows the questions and prepares the report). Rotate roles between parts so everyone operates.
 
 In this lab you train a simulated Franka Panda arm to pick up a cube with reinforcement learning, while you stay in the loop and take control when it goes wrong. You then measure how much your interventions speed up learning compared to RL alone.
 
@@ -16,7 +16,7 @@ The lab uses LeRobot's HIL-SERL implementation (Human-in-the-Loop Sample-Efficie
 
 **Prerequisites.** Basic Python and Linux shell; notions of RL (MDP, reward, policy, Q-function).
 
-**Deliverable.** Fill in [`answers.md`](answers.md) with your answers, tables and figures (from `runs/plots/`), export it to PDF, and hand it in one week after the session. You hand in through your own GitHub repository: see [Hand-in on GitHub](#hand-in-on-github).
+**Deliverable.** Fill in [`answers.md`](answers.md) with your answers, tables and figures (from `runs/plots/`), export it to PDF, and hand it in one week after the session: **Thursday 1 October 2026, before midnight**. List all group members (full name and GitHub username) at the top of `answers.md`. You hand in through your own GitHub repository: see [Hand-in on GitHub](#hand-in-on-github).
 
 ---
 
@@ -96,11 +96,11 @@ wandb login                    # paste your W&B API key once
 | End episode: failure | Esc |
 | Re-record episode | X |
 
-Space toggles intervention on, and you press it **again** to hand control back. Keep C held from the moment you grasp until the cube is lifted: releasing it opens the gripper. When you drive the robot yourself (`teleop.py`, `record.py`), lifting the cube does not end the episode: press **V** (or Enter) once it is lifted, still holding C (during training, a lift ends the episode by itself). Episodes still time out after 10 s.
+Space toggles intervention on, and you press it **again** to hand control back. Keep C held from the moment you grasp until the cube is lifted: releasing it opens the gripper. When you drive the robot yourself (`teleop.py`, `record.py`), lifting the cube does not end the episode: press **V** (or Enter) once it is lifted, still holding C (during training, a lift ends the episode by itself). When you drive yourself, episodes time out after 30 s (10 s during training).
 
-**Driving without a policy (`teleop.py`, `record.py`) uses the same takeover control.** The robot only follows your keys while you are intervening, so press Space at the start of **every** episode: each reset turns intervention off again. The keyboard is read system-wide: keys typed in any window, including your terminal or a chat, still drive the robot (Space toggles control; V, Enter, Esc and X end the episode). Don't type anywhere else while the simulator is running. The MuJoCo window also reacts to letter keys by changing what it displays (D briefly hides the robot base, for example); this is undone automatically and does not affect the robot.
+**Driving without a policy (`teleop.py`, `record.py`) uses the same takeover control.** The robot only follows your keys while you are intervening, so press Space once at the start; you keep control across episodes. (During training, each reset hands control back to the policy, so you press Space for every takeover.) The keyboard is read system-wide: keys typed in any window, including your terminal or a chat, still drive the robot (Space toggles control; V, Enter, Esc and X end the episode). Don't type anywhere else while the simulator is running. The MuJoCo window also reacts to letter keys by changing what it displays (D briefly hides the robot base, for example); this is undone automatically and does not affect the robot.
 
-Key settings: control rate 10 Hz, episodes of at most 10 s (100 steps), two cameras (`front`, `wrist`) at 128×128, an 18-dimensional state vector, and a 3-D continuous action (dx, dy, dz) plus a discrete gripper command. The reference configs are in [`configs/`](configs/); the scripts never modify them, they write a copy for each run in `runs/configs/`.
+Key settings: control rate 10 Hz, episodes of at most 10 s (100 steps) during training, 30 s when you drive yourself with `teleop.py` or `record.py`, two cameras (`front`, `wrist`) at 128×128, an 18-dimensional state vector, and a 3-D continuous action (dx, dy, dz) plus a discrete gripper command. The reference configs are in [`configs/`](configs/); the scripts never modify them, they write a copy for each run in `runs/configs/`.
 
 ---
 
@@ -122,7 +122,7 @@ It prints the observation and action spaces, runs 50 random steps, saves the two
 python scripts/teleop.py
 ```
 
-The operator attempts the task **5 times**, ending each attempt with *success* or *failure*. The observer fills in the *human trials* table in `answers.md`: time to success or failure, and what went wrong. The terminal prints `Episode ended after N steps (T s)` for each attempt. Swap roles and repeat. Teleoperation does not stop by itself: press **Ctrl+C** in the terminal to finish.
+The operator attempts the task **5 times**, ending each attempt with *success* or *failure*. The observer fills in the *human trials* table in `answers.md`: time to success or failure, and what went wrong. The terminal prints `Episode ended after N steps (T s)` for each attempt. Swap roles and repeat, so that every group member operates (in a group of 3, add 5 rows to the table for the third operator). Teleoperation does not stop by itself: press **Ctrl+C** in the terminal to finish.
 
 **Questions**
 
@@ -141,7 +141,7 @@ Goal: build your own small offline dataset. Parts 3 and 4 use the shared referen
 python scripts/record.py --episodes 10
 ```
 
-Each episode: grasp and lift the cube, then press **success** (V while still holding C, or Enter). If you mess up, press **re-record** (X) or **failure** (Esc). A successful episode ends with reward 1; a failed or timed-out one with reward 0. Split the 10 episodes between the two group members. At the end the script prints one line per episode (length, final reward). Run `python scripts/record.py --summary-only` to see it again.
+Each episode: grasp and lift the cube, then press **success** (V while still holding C, or Enter). If you mess up, press **re-record** (X) or **failure** (Esc). A successful episode ends with reward 1; a failed or timed-out one with reward 0. Split the 10 episodes between the group members. At the end the script prints one line per episode (length, final reward). Run `python scripts/record.py --summary-only` to see it again.
 
 **Questions**
 
