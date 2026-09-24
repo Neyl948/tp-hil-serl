@@ -89,19 +89,16 @@ wandb login                    # paste your W&B API key once
 | Action | Key |
 | --- | --- |
 | Move in x–y plane | Arrow keys |
-| Move up / down (z) | Right Shift / Left Shift |
-| Close gripper | Left Ctrl |
-| Open gripper | Right Ctrl |
+| Move up / down (z) | U / D (tap for one step, hold to keep moving) |
+| Grasp | Hold C (the gripper opens when you release it) |
 | **Take over from the policy** | **Space** (toggle on/off) |
-| End episode: success | Enter |
+| End episode: success | V (next to C, so you can keep holding C) or Enter |
 | End episode: failure | Esc |
-| Re-record episode | R |
+| Re-record episode | X |
 
-Space toggles intervention on, and you press it **again** to hand control back.
+Space toggles intervention on, and you press it **again** to hand control back. Keep C held from the moment you grasp until the cube is lifted: releasing it opens the gripper. When you drive the robot yourself (`teleop.py`, `record.py`), lifting the cube does not end the episode: press **V** (or Enter) once it is lifted, still holding C (during training, a lift ends the episode by itself). Episodes still time out after 10 s.
 
-**Driving without a policy (`teleop.py`, `record.py`) uses the same takeover control.** The robot only follows your keys while you are intervening, so press Space at the start of **every** episode: each reset turns intervention off again. The keyboard is read system-wide: Enter, Esc or R typed in any window, including your terminal, ends the current episode.
-
-> The simulator prints its own key help at startup, and it says *Backspace* ends an episode with failure and *ESC* exits. That text is wrong: **Esc = failure** (as in the table above), and Backspace does nothing.
+**Driving without a policy (`teleop.py`, `record.py`) uses the same takeover control.** The robot only follows your keys while you are intervening, so press Space at the start of **every** episode: each reset turns intervention off again. The keyboard is read system-wide: keys typed in any window, including your terminal or a chat, still drive the robot (Space toggles control; V, Enter, Esc and X end the episode). Don't type anywhere else while the simulator is running. The MuJoCo window also reacts to letter keys by changing what it displays (D briefly hides the robot base, for example); this is undone automatically and does not affect the robot.
 
 Key settings: control rate 10 Hz, episodes of at most 10 s (100 steps), two cameras (`front`, `wrist`) at 128×128, an 18-dimensional state vector, and a 3-D continuous action (dx, dy, dz) plus a discrete gripper command. The reference configs are in [`configs/`](configs/); the scripts never modify them, they write a copy for each run in `runs/configs/`.
 
@@ -125,7 +122,7 @@ It prints the observation and action spaces, runs 50 random steps, saves the two
 python scripts/teleop.py
 ```
 
-The operator attempts the task **5 times**, ending each attempt with *success* or *failure*. The observer fills in the *human trials* table in `answers.md`: time to success or failure, and what went wrong. The terminal prints `Episode ended after N steps ...` for each attempt: the time is N ÷ 10 seconds (the time printed on that line is counted from the start of the session, not the episode, so ignore it). Swap roles and repeat. Close the window (or Ctrl+C) to finish.
+The operator attempts the task **5 times**, ending each attempt with *success* or *failure*. The observer fills in the *human trials* table in `answers.md`: time to success or failure, and what went wrong. The terminal prints `Episode ended after N steps (T s)` for each attempt. Swap roles and repeat. Teleoperation does not stop by itself: press **Ctrl+C** in the terminal to finish.
 
 **Questions**
 
@@ -144,7 +141,7 @@ Goal: build your own small offline dataset. Parts 3 and 4 use the shared referen
 python scripts/record.py --episodes 10
 ```
 
-Each episode: grasp and lift the cube, then press **success** (Enter). If you mess up, press **re-record** (R) or **failure** (Esc). A successful episode ends with reward 1; a failed or timed-out one with reward 0. Split the 10 episodes between the two group members. At the end the script prints one line per episode (length, final reward). Run `python scripts/record.py --summary-only` to see it again.
+Each episode: grasp and lift the cube, then press **success** (V while still holding C, or Enter). If you mess up, press **re-record** (X) or **failure** (Esc). A successful episode ends with reward 1; a failed or timed-out one with reward 0. Split the 10 episodes between the two group members. At the end the script prints one line per episode (length, final reward). Run `python scripts/record.py --summary-only` to see it again.
 
 **Questions**
 

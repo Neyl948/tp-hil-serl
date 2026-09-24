@@ -4,8 +4,8 @@
     python scripts/record.py --episodes 5
     python scripts/record.py --summary-only     # just inspect an existing recording
 
-Each episode: press Space to take control, grasp and lift the cube, then press SUCCESS (Enter).
-Messed up? RE-RECORD (R) or FAILURE (Esc).
+Each episode: press Space to take control, grasp and lift the cube (hold C), then press SUCCESS (V or Enter).
+Messed up? RE-RECORD (X) or FAILURE (Esc).
 The dataset is saved locally in runs/data/pick_cube_<group>/ (never pushed to the Hub).
 """
 

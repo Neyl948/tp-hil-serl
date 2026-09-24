@@ -11,4 +11,9 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .venv/
+
+# macOS folder metadata
+.DS_Store
+
+# Instructor material (preparation notes, answer key, worked solution): never in the student repo
 instructor/

@@ -1,4 +1,4 @@
-"""Start a LeRobot RL process with a one-line compatibility fix.
+"""Start a LeRobot RL process with the TP's compatibility fixes.
 
     python scripts/lerobot_rl.py learner --config_path runs/configs/<run>.json
     python scripts/lerobot_rl.py actor   --config_path runs/configs/<run>.json
@@ -11,16 +11,12 @@ the normal LeRobot module unchanged. `train.py` prints the right command for you
 LeRobot also refuses to start a process whose output directory already exists, and the learner
 creates it before the actor starts, so the actor gets its own sibling directory (`<dir>_actor`).
 
-Two more fixes for teleoperation: LeRobot's INFO messages ("Episode ended after ... steps") are
-switched back on (an import silently sets logging to WARNING first), and a SUCCESS/FAILURE key
-pressed during the reset pause no longer ends the next episode on its first step. The keyboard's
-re-record key (R) is wired up: gym_hil listens for a key that does not exist, and LeRobot never
-passes gym_hil's re-record flag on to the recording loop.
+The processes that open the simulator (teleoperation, recording, the actor) also get the TP's
+keyboard controls, set up by `teleop.install()` (see `teleop.py`).
 """
 
 import dataclasses
 import json
-import logging
 import runpy
 import sys
 
@@ -38,69 +34,22 @@ def patch_reset_config():
             f.type = list[float] | None
 
 
-def patch_input_controllers():
-    """Forget an episode-end key (Enter/Esc/Y/A/X) on reset instead of applying it to the next episode."""
-    from gym_hil.wrappers import intervention_utils as iu
-
-    for cls in (iu.KeyboardController, iu.GamepadController, iu.GamepadControllerHID):
-        def reset(self, _orig=cls.reset):
-            _orig(self)
-            self.episode_end_status = None
-        cls.reset = reset
-
-    start, stop = iu.KeyboardController.start, iu.KeyboardController.stop
-
-    def start_with_rerecord(self):
-        from pynput import keyboard
-
-        start(self)
-
-        def on_press(key):
-            if getattr(key, "char", None) in ("r", "R"):
-                self.key_states["rerecord"] = True
-                self.episode_end_status = "rerecord_episode"
-
-        self.rerecord_listener = keyboard.Listener(on_press=on_press)
-        self.rerecord_listener.start()
-
-    def stop_with_rerecord(self):
-        stop(self)
-        if getattr(self, "rerecord_listener", None) is not None:
-            self.rerecord_listener.stop()
-
-    iu.KeyboardController.start = start_with_rerecord
-    iu.KeyboardController.stop = stop_with_rerecord
-
-
-def patch_rerecord_flag():
-    """Pass gym_hil's "rerecord_episode" flag on under the key the recording loop checks."""
-    from lerobot.processor import TransitionKey
-    from lerobot.processor.hil_processor import GymHILAdapterProcessorStep
-    from lerobot.teleoperators.utils import TeleopEvents
-
-    call = GymHILAdapterProcessorStep.__call__
-
-    def call_with_rerecord(self, transition):
-        transition = call(self, transition)
-        info = transition.get(TransitionKey.INFO, {})
-        if "rerecord_episode" in info:
-            info[TeleopEvents.RERECORD_EPISODE] = info["rerecord_episode"]
-        return transition
-
-    GymHILAdapterProcessorStep.__call__ = call_with_rerecord
-
-
-def actor_output_args(argv):
-    """`--output_dir=<run dir>_actor` for the actor, unless the caller already set one."""
-    if any(a.startswith("--output_dir") for a in argv):
-        return []
+def load_config(argv):
+    """The JSON config passed with --config_path, or {}."""
     for i, a in enumerate(argv):
         path = argv[i + 1] if a == "--config_path" and i + 1 < len(argv) else (
             a.split("=", 1)[1] if a.startswith("--config_path=") else None)
         if path:
-            out = json.load(open(path)).get("output_dir")
-            return [f"--output_dir={out}_actor"] if out else []
-    return []
+            return json.load(open(path))
+    return {}
+
+
+def actor_output_args(argv, cfg):
+    """`--output_dir=<run dir>_actor` for the actor, unless the caller already set one."""
+    if any(a.startswith("--output_dir") for a in argv):
+        return []
+    out = cfg.get("output_dir")
+    return [f"--output_dir={out}_actor"] if out else []
 
 
 def main():
@@ -108,10 +57,12 @@ def main():
         sys.exit(f"usage: python scripts/lerobot_rl.py {{{'|'.join(MODULES)}}} --config_path <file>")
     module = MODULES[sys.argv[1]]
     patch_reset_config()
-    patch_input_controllers()
-    patch_rerecord_flag()
-    logging.getLogger().setLevel(logging.INFO)
-    extra = actor_output_args(sys.argv[2:]) if sys.argv[1] == "actor" else []
+    cfg = load_config(sys.argv[2:])
+    if sys.argv[1] in ("actor", "gym_manipulator"):
+        import teleop
+        # Without a policy (teleop, record) the operator ends each episode with Enter.
+        teleop.install(cfg.get("env", {}).get("fps"), success_by_key=sys.argv[1] == "gym_manipulator")
+    extra = actor_output_args(sys.argv[2:], cfg) if sys.argv[1] == "actor" else []
     sys.argv = [module] + sys.argv[2:] + extra
     runpy.run_module(module, run_name="__main__", alter_sys=True)
 
