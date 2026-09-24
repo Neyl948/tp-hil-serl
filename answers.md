@@ -46,7 +46,7 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 **Q2.1** Un algorithme off-policy comme SAC optimise sa fonction Q via l'équation de Bellman à partir de transitions stockées dans un buffer, ce qui lui permet d'apprendre sur des données qui ne viennent pas de sa politique active, comme des démonstrations humaines. À l'inverse, un algorithme on-policy comme PPO exige que les transitions proviennent strictement de sa politique courante pour calculer son gradient de politique. Utiliser des trajectoires externes fausse cette estimation, et corriger ce biais par échantillonnage préférentiel est impossible puisque la distribution probabiliste des actions humaines est inconnue.
 
-**Q2.2** ...
+**Q2.2** Deux propriétés utiles : Une trajectoire directe et fluide vers le cube, qui offre un chemin court et sans bruit vers la récompense.Des corrections de trajectoire face à un léger désalignement, ce qui apprend à la politique à récupérer en cas d'erreur.Deux propriétés néfastes :Des actions contradictoires ou hésitantes dans des états similaires, ce qui perturbe l'optimisation de la fonction $Q$.Des fermetures de pince dans le vide ou des temps morts prolongés, qui renforcent des actions inutiles ou pénalisées.
 
 **Q2.3** ...
 
