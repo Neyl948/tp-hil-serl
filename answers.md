@@ -26,7 +26,7 @@ Replace every `...` with your answer. Insert figures from `runs/plots/` with `![
 | | 4 | | | |
 | | 5 | | | |
 
-**Q1.1** ...
+**Q1.1** L'espace d'observation est composé des images de caméra 'front' et 'wrist' (tous les deux de dimension (128, 128, 3)) et de 'agent_pos' la position du robot (de dimension 18).
 
 **Q1.2** ...
 
