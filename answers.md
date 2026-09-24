@@ -36,15 +36,15 @@ Pour l'action, l'espace brut du simulateur commande directement les 7 moteurs ar
 La récompense est sparse : le robot ne reçoit rien tant que la tâche n'est pas accomplie.  
 Le problème en exploration aléatoire est que le robot n'apprend rien. Comme il n'est récompensé que si il a soulevé le cube, il faut qu'il y ait un enchaînement de mouvements qui lui permette d'effectuer cette tâche. Or en ne récoltant que des 0.0, la probabilité pour que ça arrive par hasard est faible.
 
-**Q1.4** Success rate: ... · Mean time to success: ... s · Hardest phase: ...
+**Q1.4** Success rate: 100% · Mean time to success: 2.4 s · Hardest phase: Aucune car le robot commence juste au dessus du cube, il faut juste descendre, attraper et remonter.
 
 ---
 
 ## Part 2: Record demonstrations
 
-Episodes recorded: ... · Successful: ... · Mean length: ... s
+Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
-**Q2.1** ...
+**Q2.1** Algorithmes off-policy (ex. SAC) : La mise à jour de la fonction critique $Q$ repose sur l'équation de Bellman, qui vérifie la cohérence locale d'une transition $(s, a, r, s')$ sans exiger que l'action $a$ ait été générée par la politique actuellement optimisée. Le modèle peut donc intégrer n'importe quelle trajectoire valide issue d'un comportement tiers (ici, un démonstrateur humain) dans son replay buffer et l'exploiter pour la descente de gradient.   Algorithmes on-policy (ex. PPO) : L'évaluation du gradient de politique impose mathématiquement que les transitions soient échantillonnées selon la distribution de la politique active courante $\pi_\theta$ ($\mathbb{E}_{(s, a) \sim \pi_\theta}$). Utiliser des démonstrations externes introduit un biais de distribution majeur. Pour corriger ce décalage, il faudrait appliquer un échantillonnage préférentiel (importance sampling) avec le ratio $\frac{\pi_\theta(a\vert{}s)}{\pi_{\text{humain}}(a\vert{}s)}$, ce qui est impossible en pratique car la loi de probabilité humaine $\pi_{\text{humain}}$ est inconnue et générerait une variance numérique incontrôlable.
 
 **Q2.2** ...
 
