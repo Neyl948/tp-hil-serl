@@ -30,7 +30,7 @@ Replace every `...` with your answer. Insert figures from `runs/plots/` with `![
 Les 18 valeurs contiennent les informations sur la position des éléments du robot dans l'espace et sur leur vitesse.  
 Pour l'action, l'espace brut du simulateur commande directement les 7 moteurs articulaires du bras et la pince. Avec le wrapper, l'espace vu par l'agent est réduit à 4 valeurs : les déplacements relatifs de la pince en $x$, $y$, $z$ ($\Delta x, \Delta y, \Delta z$) et une commande d'ouverture/fermeture du gripper.   La différence est que le wrapper masque toute la complexité articulaire : il calcule la cinématique inverse en interne, ce qui permet à l'agent de commander des mouvements 3D intuitifs plutôt que de devoir apprendre à coordonner chaque moteur du bras.
 
-**Q1.2** ...
+**Q1.2** Au lieux d'avoir 7 dimensions pour les articulations, l'espace de l'effecteur est réduit à 3 dimensions $\Delta x, \Delta y, \Delta z$. L'apprentissage est plus rapide car les actions sont moins complexes : si on veut faire un mouvement, on avance selon les 3 axes au lieu de calculer la rotation pour chaque articulation.
 
 **Q1.3** ...
 
