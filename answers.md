@@ -62,9 +62,9 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 **Q3.3** Un délais d'envoi trop long oblige l'acteur à tourner avec d'anciens poids, ce qui signifie qu'il collecte les données avec une politique en retard par rapport aux calculs du learner. SAC est particulièrement robuste à ce décalage car c'est un algorithme off-policy : il stocke tout dans un buffer et est prévu pour apprendre sur des données passées.
 
-**Q3.4** ...
+**Q3.4** Un avantage de geler l'encodeur visuel est de stabiliser l'apprentissage et d'économiser beaucoup de calculs, ce qui évite que l'extraction des images ne devienne instable à cause du bruit de l'apprentissage par renforcement. Un inconvénient est que le robot ne peut pas ajuster sa vision aux spécificités exactes de la tâche, comme les reflets, les textures ou la forme précise du cube, ce qui peut limiter ses performances.
 
-**Q3.5** γ¹⁰⁰ = ... · Implication: ...
+**Q3.5** γ¹⁰⁰ = 0.048 · Implication: La récompense finale est atténuée de plus de 95% au tout début de l'épisode, ce qui rend l'apprentissage des premiers gestes d'approche très difficile avec une récompense creuse.
 
 ---
 
