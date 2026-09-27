@@ -50,7 +50,7 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 * Propriétés utiles : une trajectoire directe et fluide vers le cube, qui offre un chemin court et sans bruit vers la récompense. Des corrections de trajectoire face à un désalignement, pour apprendre à la politique à récupérer en cas d'erreur.  
 * Propriétés néfastes : des actions contradictoires ou hésitantes dans des états similaires, ce qui perturbe l'optimisation de la fonction $Q$. Des fermetures de pince dans le vide ou des temps morts prolongés, qui renforcent des actions inutiles ou pénalisées.
 
-**Q2.3** ...
+**Q2.3** 10 démos ne suffisent pas pour avoir une politique solide et robuste face au bruit. Cela expose le modèle au problème du covariate shift : la distribution des états rencontrés en test dévie de celle vue à l'entrainement. Comme le modèle n'a vu que des réussites parfaites, la moindre erreur le place dans un état inconnu. Ne sachant pas comment s'en rattraper, ses erreurs s'accumulent à chaque pas de temps et le bras finit par rater le cube.
 
 ---
 
