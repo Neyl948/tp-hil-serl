@@ -58,7 +58,7 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 **Q3.1** La température $alpha$ contrôle l'équilibre entre exploration et exploitation. Si $alpha$ est trop élevée, le robot cherche uniquement à maximiser son entropie : ses mouvements deviennent aléatoires et il n'apprend jamais à accomplir la tâche. Si $alpha$ est trop faible, l'entropie est négligée : la politique devient figée et arrête d'explorer.
 
-**Q3.2** ...
+**Q3.2** $utd_ratio = 2$ signifie que le modèle effectue deux étapes d'optimisation du réseau pour chaque pas de temps. Les méthodes efficaces augmentent ce ratio pour tirer le maximum d'apprentissage de chaque interaction.
 
 **Q3.3** ...
 
