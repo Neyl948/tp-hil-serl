@@ -56,7 +56,7 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 ## Part 3: RL baseline without interventions
 
-**Q3.1** ...
+**Q3.1** La température $alpha$ contrôle l'équilibre entre exploration et exploitation. Si $alpha$ est trop élevée, le robot cherche uniquement à maximiser son entropie : ses mouvements deviennent aléatoires et il n'apprend jamais à accomplir la tâche. Si $alpha$ est trop faible, l'entropie est négligée : la politique devient figée et arrête d'explorer.
 
 **Q3.2** ...
 
