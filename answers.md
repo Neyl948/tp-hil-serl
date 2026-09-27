@@ -46,7 +46,8 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 **Q2.1** Un algorithme off-policy apprend à partir de transitions stockées dans un buffer, peu importe qui a fait le geste. Il regarde juste ce qui s'est passé après chaque action, donc on peut lui donner des démonstrations faites par un humain. À l'inverse, un algorithme on-policy a besoin que les données viennent de sa propre politique au moment où il s'entraîne. Si on lui injecte des trajectoires humaines, ses calculs de mise à jour sont faussés parce que les données ne correspondent pas à ce que le modèle produit actuellement.
 
-**Q2.2** Deux propriétés utiles : Une trajectoire directe et fluide vers le cube, qui offre un chemin court et sans bruit vers la récompense.Des corrections de trajectoire face à un léger désalignement, ce qui apprend à la politique à récupérer en cas d'erreur.Deux propriétés néfastes :Des actions contradictoires ou hésitantes dans des états similaires, ce qui perturbe l'optimisation de la fonction $Q$.Des fermetures de pince dans le vide ou des temps morts prolongés, qui renforcent des actions inutiles ou pénalisées.
+**Q2.2** * Propriétés utiles : une trajectoire directe et fluide vers le cube, qui offre un chemin court et sans bruit vers la récompense. Des corrections de trajectoire face à un désalignement, pour apprendre à la politique à récupérer en cas d'erreur.  
+* Propriétés néfastes : des actions contradictoires ou hésitantes dans des états similaires, ce qui perturbe l'optimisation de la fonction $Q$. Des fermetures de pince dans le vide ou des temps morts prolongés, qui renforcent des actions inutiles ou pénalisées.
 
 **Q2.3** ...
 
