@@ -79,15 +79,15 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 | noHIL | | | — | — |
 | HIL | | | | |
 
-**Q4.1** ...
+**Q4.1** Pareil que pour la partie 3, l'entraînement a crash au bout d'environ 7min donc nous n'avons pas pu le faire correctement.
 
-**Q4.2** ...
+**Q4.2** Je pense que les interventions diminuent au fil du temps car le robot apprend de celles-ci.
 
 **Q4.3** Metric proposed: ... · Value for our HIL run: ...
 
-**Q4.4** ...
+**Q4.4** Dans le code de l'actor, une transition est marquée comme intervention via un drapeau booléen qui s'active dès que l'opérateur reprend la main au clavier. Dans le learner, ces transitions sont envoyées dans le buffer de démonstrations pour que l'algorithme sur-échantillonne ces actions humaines réussies lors des mises à jour du réseau.
 
-**Q4.5** ...
+**Q4.5** Cette approche se rapproche de DAgger plutôt que du simple ajout de démos car l'humain intervient directement sur les états visités par la politique actuelle du robot. Au lieu de lui fournir des trajectoires idéales partant de zéro, on lui apprend à corriger ses propres erreurs depuis ses positions de dérive, ce qui règle directement le problème du covariate shift.
 
 ---
 
