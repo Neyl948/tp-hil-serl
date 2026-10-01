@@ -1,7 +1,7 @@
 # TP HIL-SERL: report
 
 **Group:** 
-**Students:** 
+**Students:** Neyl Bajon-Bouzid Thomas Sanchez
 **Date:** 
 **Device used (from `check_setup.py`):** cuda / mps / cpu — GPU model if any:
 
@@ -91,9 +91,9 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 ---
 
-## Part 5: Experiment ___
+## Part 5: Experiment B
 
-**Q5.1 Hypothesis (written before the run):** ...
+**Q5.1 Hypothesis (written before the run):** Rajouter de l'entropie va augmenter l'exploration. En ajouter trop va donc créer trop de mouvements aléatoires inutiles et ralentir l'aprentissage. 
 
 ![HIL vs experiment](runs/plots/GROUP_HIL_vs_expX.png)
 
@@ -102,9 +102,9 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 | HIL (first 20 min) | | | | |
 | exp ___ | | | | |
 
-**Q5.1 Result:** ...
+**Q5.1 Result:** Il a fallu modifier online_buffer_capacity, offline_buffer_capacity et num_workers pour régler des problèmes de mémoire qui faisaient planter le processus, cependant même après avoir réussi à le faire fonctionner 20 min aucun succès n'a été enregistré par l'observateur comme le montre le graphique de la session expB.
 
-**Q5.2** ...
+**Q5.2** Oui, l'hypothèse est confirmée par notre observation : l'agent n'a pas réussi à apprendre la tâche car l'entropie excessive l'empêchait de stabiliser une trajectoire, mais il faut préciser que les limitations techniques liées à la RAM ont requis de réduire le multi-processing et la taille du buffer ce qui ne nous permet pas d'être sûr de nos résultats
 
 ---
 
@@ -116,8 +116,8 @@ Episodes recorded: 10 · Successful: 6 · Mean length: 5.98 s
 
 **Q6.2** ...
 
-**Q6.3** ...
+**Q6.3** Sur un robot réel la récompense parfaite et gratuite proviendrait généralement d'un classifieur de succès appris. Cela introduit de nouveaux modes d'échec, notamment les erreurs de classification, des faux positifs ou des faux négatifs liés par exemple à la lumière de la pièce.
 
-**Q6.4** ...
+**Q6.4** Des interventions trop longues, un manque de consistance ou un mauvais timing peut détériorer l'apprentissage. Prendre le contrôle en permanence ne permet pas au robot d'apprendre à corriger ses propres erreurs (covariate shift), rendant l'intervention moins utile qu'une correction courte. Hésiter, trembler ou agir de manière contradictoire face aux mêmes situations perturbe l'optimisation de l'algorithme, et intervenir trop tard (quand l'état est déjà irrécupérable) ou effectuer des actions inutiles (comme fermer la pince dans le vide), ce qui pollue le buffer avec des transitions pénalisées.
 
-**Q6.5** ...
+**Q6.5** Pour obtenir le même bénéfice avec moins d'efforts, le système pourrait intégrer de l'apprentissage actif fondé sur l'incertitude. Au lieu d'exiger que l'opérateur surveille le robot en permanence, le robot mettrait le système en pause et demanderait de l'aide spécifiquement lorsqu'il rencontre un état où l'écart-type de ses réseaux critic (qui estiment la valeur de l'action) est très élevé. Cela libère complètement l'attention de l'humain lors des phases que le robot maîtrise déjà.
